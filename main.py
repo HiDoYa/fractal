@@ -5,7 +5,7 @@ import random
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GRAY = (105, 105, 105)
+GRAY = (205, 205, 205)
 
 pygame.init()
 size = (1280, 720)
@@ -20,7 +20,9 @@ screen.fill(GRAY)
 def triangle(n, pos_1, pos_2, pos_3, color):
     # For cool flashing:
     #color = (color[0] - random.randint(10, 30), color[1] - random.randint(10, 30), color[2] - random.randint(10, 30))
-    color = (color[0], color[1] - 10, color[2] - 10)
+    #color = (color[0], color[1] - 10, color[2] - 10)
+    color = (pos_1[0] / size[0] * 255, pos_1[1] / size[1] * 255, color[2] - 10)
+
     pygame.draw.polygon(screen, color, [pos_1, pos_2, pos_3])
 
     point_a = [(pos_1[0] + pos_2[0]) / 2, (pos_2[1] + pos_1[1]) / 2]
@@ -34,7 +36,8 @@ def triangle(n, pos_1, pos_2, pos_3, color):
     triangle(n - 1, point_b, point_c, pos_3, color)
 
 def tree(n, pos_1, angle, length, color):
-    color = (color[0], color[1] - 10, color[2] - 10)
+    #color = (color[0], color[1] - 10, color[2] - 10)
+    color = (0, color[1] - 10, 0)
 
     pos_2 = [pos_1[0] + math.cos(angle) * length, pos_1[1] + math.sin(angle) * length]
     pos_3 = [pos_2[0] + math.cos(angle / 2) * length, pos_2[1] + math.sin(angle / 2) * length]
@@ -51,7 +54,7 @@ def tree(n, pos_1, angle, length, color):
     tree(n - 1, pos_4, math.atan2(pos_4[1] - pos_2[1], pos_4[0] - pos_2[0]), length * 2 / 3, color)
 
 def mountain(n, pos_1, pos_2, color):
-    color = (color[0], color[1] - 10, color[2] - 10)
+    color = (pos_1[0] / size[0] * 255, pos_1[1] / size[1] * 255, color[2])
 
     angle = math.atan2(pos_1[1] - pos_2[1], pos_2[0] - pos_1[0])
     angle_new = angle + math.pi / 4
@@ -65,6 +68,7 @@ def mountain(n, pos_1, pos_2, color):
     pos_c = [pos_2[0] - math.cos(angle) * x, pos_2[1] + math.sin(angle) * x]
     
     if n == 0:
+        # Because don't want extra lines to be drawn
         pygame.draw.line(screen, color, pos_1, pos_a)
         pygame.draw.line(screen, color, pos_a, pos_b)
         pygame.draw.line(screen, color, pos_b, pos_c)
@@ -75,6 +79,37 @@ def mountain(n, pos_1, pos_2, color):
     mountain(n - 1, pos_a, pos_b, color)
     mountain(n - 1, pos_b, pos_c, color)
     mountain(n - 1, pos_c, pos_2, color)
+
+def circle(n, pos, rad, color):
+    color = (pos[0] / size[0] * 255, pos[1] / size[1] * 120, pos[0] / size[0] * 60)
+
+    pygame.draw.circle(screen, color, pos, int(rad), 2)
+
+    if n == 0:
+        return
+
+    pos_1 = [pos[0], int(pos[1] - rad / 2)]
+    pos_2 = [pos[0], int(pos[1] + rad / 2)]
+    pos_3 = [int(pos[0] - rad / 2), pos[1]]
+    pos_4 = [int(pos[0] + rad / 2), pos[1]]
+
+    pos_5 = [int(pos[0] + (rad / 2) * math.cos(math.pi/4)), int(pos[1] + (rad / 2) * math.sin(math.pi/4))]
+    pos_6 = [int(pos[0] + (rad / 2) * math.cos(math.pi/4)), int(pos[1] - (rad / 2) * math.sin(math.pi/4))]
+    pos_7 = [int(pos[0] - (rad / 2) * math.cos(math.pi/4)), int(pos[1] + (rad / 2) * math.sin(math.pi/4))]
+    pos_8 = [int(pos[0] - (rad / 2) * math.cos(math.pi/4)), int(pos[1] - (rad / 2) * math.sin(math.pi/4))]
+
+    circle(n - 1, pos_1, rad / 2, color)
+    circle(n - 1, pos_2, rad / 2, color)
+    circle(n - 1, pos_3, rad / 2, color)
+    circle(n - 1, pos_4, rad / 2, color)
+
+    circle(n - 1, pos_5, rad / 2, color)
+    circle(n - 1, pos_6, rad / 2, color)
+    circle(n - 1, pos_7, rad / 2, color)
+    circle(n - 1, pos_8, rad / 2, color)
+
+def circle_2(n, pos, rad, color):
+    pygame.draw.circle(screen, color, pos, int(rad), 2)
 
 n = 3
 
@@ -106,7 +141,11 @@ while not done:
         time_pass = 0
     if pressed[pygame.K_3] and time_pass > 20:
         screen.fill(GRAY)
-        mountain(6, [50, 500], [1230, 500], WHITE)
+        mountain(6, [0, 500], [1280, 500], WHITE)
+        time_pass = 0
+    if pressed[pygame.K_4] and time_pass > 20:
+        screen.fill(GRAY)
+        circle(3, [640, 360], 300, WHITE)
         time_pass = 0
 
 
