@@ -12,12 +12,15 @@ size = (1280, 720)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Fractal")
 clock = pygame.time.Clock()
+time_pass = 0
 done = False
+
+screen.fill(GRAY)
 
 def triangle(n, pos_1, pos_2, pos_3, color):
     # For cool flashing:
     #color = (color[0] - random.randint(10, 30), color[1] - random.randint(10, 30), color[2] - random.randint(10, 30))
-    color = (color[0], color[1] - 10, color[2] - 10)
+    color = (color[0], color[1] - 20, color[2] - 20)
     pygame.draw.polygon(screen, color, [pos_1, pos_2, pos_3])
 
     point_a = [(pos_1[0] + pos_2[0]) / 2, (pos_2[1] + pos_1[1]) / 2]
@@ -47,37 +50,28 @@ def tree(n, pos_1, angle, length, color):
     tree(n - 1, pos_3, math.atan2(pos_3[1] - pos_2[1], pos_3[0] - pos_2[0]), length / 2, color)
     tree(n - 1, pos_4, math.atan2(pos_4[1] - pos_2[1], pos_4[0] - pos_2[0]), length / 2, color)
 
-def juliana_hopkins(n, pos, multiplier):
-    def func(x):
-        return x * x * x
-    
-    color = WHITE
-    pts = []
-
-    for i in range(-10, 10):
-        pts.append([int(pos[0] + i * 5), int(pos[1] + func(i / 10) * multiplier)])
-
-    for i in range(0, len(pts)):
-        if i != 0:
-            pygame.draw.line(screen, color, pts[i - 1], pts[i], 2)
-
-    if n == 0:
-        return
-
-    juliana_hopkins(n - 1, pts[len(pts) - 1], multiplier * 3 / 4)
-    juliana_hopkins(n - 1, pts[0], multiplier * 3 / 4)
+def mountain(n, pos_1, pos_2):
+    angle = math.atan2(pos_2[0] - pos_1[0], pos_2[1] - pos_1[1])
+    # TODO
 
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
     
-    screen.fill(GRAY)
+    pressed = pygame.key.get_pressed()
 
-    # triangle(6, [640, 120], [300, 600], [980, 600], WHITE)
-    # tree(10, [640, 0], math.pi / 2, 200, WHITE)
-    juliana_hopkins(3, [640, 320], 90)
-    juliana_hopkins(3, [640, 320], -90)
+    time_pass += 1
+
+    if pressed[pygame.K_1] and time_pass > 20:
+        screen.fill(GRAY)
+        triangle(6, [640, 120], [300, 600], [980, 600], WHITE)
+        time_pass = 0
+    if pressed[pygame.K_2] and time_pass > 20:
+        screen.fill(GRAY)
+        tree(10, [640, 0], math.pi / 2, 200, WHITE)
+        time_pass = 0
+
     pygame.display.flip()
 
     # 60 fps
