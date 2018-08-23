@@ -1,3 +1,4 @@
+from cmath import sqrt
 import math
 import pygame
 import random
@@ -69,10 +70,10 @@ def mountain(n, pos_1, pos_2, color):
     
     if n == 0:
         # Because don't want extra lines to be drawn
-        pygame.draw.line(screen, color, pos_1, pos_a)
-        pygame.draw.line(screen, color, pos_a, pos_b)
-        pygame.draw.line(screen, color, pos_b, pos_c)
-        pygame.draw.line(screen, color, pos_c, pos_2)
+        pygame.draw.line(screen, color, pos_1, pos_a, 2)
+        pygame.draw.line(screen, color, pos_a, pos_b, 2)
+        pygame.draw.line(screen, color, pos_b, pos_c, 2)
+        pygame.draw.line(screen, color, pos_c, pos_2, 2)
         return
 
     mountain(n - 1, pos_1, pos_a, color)
@@ -108,10 +109,69 @@ def circle(n, pos, rad, color):
     circle(n - 1, pos_7, rad / 2, color)
     circle(n - 1, pos_8, rad / 2, color)
 
-def circle_2(n, pos, rad, color):
-    pygame.draw.circle(screen, color, pos, int(rad), 2)
+center = [640, 360]
+def apollonian_wrp(n, pos, rad, color):
+    pos_1 = [int(pos[0] - rad / 2), pos[1]]
+    pos_2 = [int(pos[0] + rad / 2), pos[1]]
 
-n = 3
+    pygame.draw.circle(screen, color, pos, int(rad), 1)
+    pygame.draw.circle(screen, color, pos_1, int(rad / 2), 1)
+    pygame.draw.circle(screen, color, pos_2, int(rad / 2), 1)
+
+    b_1 = -1 / rad
+    b_2 = rad / 2
+    b_3 = rad / 2
+
+    apollonian_rec(n, pos, pos_1, pos_2, -1 / rad, 2 / rad, 2 / rad, color)
+
+def apollonian_rec(n, p_1, p_2, p_3, b_1, b_2, b_3, color):
+    # Descartes theorem
+    num_to_root = b_1 * b_2 + b_1 * b_3 + b_2 * b_3
+    if num_to_root < 0:
+        return
+    r = 2 * math.sqrt(b_1 * b_2 + b_1 * b_3 + b_2 * b_3)
+    s = b_1 + b_2 + b_3
+
+    b_4_1 = s + r
+    b_4_2 = s - r
+
+    # Get position
+    z_1 = p_1[0] + p_1[1] * 1j
+    z_2 = p_2[0] + p_2[1] * 1j
+    z_3 = p_3[0] + p_3[1] * 1j
+
+    #r = 2 * sqrt(b_1 * z_1 + b_2 * z_2 + z_3)
+    r = 2 * sqrt(b_1 * z_1 * b_2 * z_2 + b_1 * z_1 * b_3 * z_3 + b_2 * z_2 * b_3 * z_3)
+    s = b_1 * z_1 + b_2 * z_2 + b_3 * z_3
+
+    z_4_1 = [(r.real + s.real) / b_4_1, (r.imag + s.imag) / b_4_1]
+    z_4_2 = [(-r.real + s.real) / b_4_2, (-r.imag + s.imag) / b_4_2]
+
+    if b_4_1 > 0:
+        try:
+            pygame.draw.circle(screen, color, [int(z_4_1[0]), int(z_4_1[1])], int(abs(1 / b_4_1)), 1)
+        except ValueError:
+            pygame.draw.circle(screen, color, [int(z_4_1[0]), int(z_4_1[1])], int(abs(1 / b_4_1)), 0)
+    if b_4_2 > 0:
+        try:
+            pygame.draw.circle(screen, color, [int(z_4_2[0]), int(z_4_2[1])], int(abs(1 / b_4_2)), 1)
+        except ValueError:
+            pygame.draw.circle(screen, color, [int(z_4_1[0]), int(z_4_1[1])], int(abs(1 / b_4_1)), 0)
+
+    if n == 0:
+        return
+
+    apollonian_rec(n - 1, p_1, p_2, z_4_1, b_1, b_2, b_4_1, color)
+    apollonian_rec(n - 1, p_1, p_2, z_4_2, b_1, b_2, b_4_2, color)
+
+    apollonian_rec(n - 1, p_2, p_3, z_4_1, b_2, b_3, b_4_1, color)
+    apollonian_rec(n - 1, p_2, p_3, z_4_2, b_2, b_3, b_4_2, color)
+
+    apollonian_rec(n - 1, p_1, p_3, z_4_1, b_1, b_3, b_4_1, color)
+    apollonian_rec(n - 1, p_1, p_3, z_4_2, b_1, b_3, b_4_2, color)
+
+
+n = 0
 
 while not done:
     for event in pygame.event.get():
@@ -146,6 +206,10 @@ while not done:
     if pressed[pygame.K_4] and time_pass > 20:
         screen.fill(GRAY)
         circle(3, [640, 360], 300, WHITE)
+        time_pass = 0
+    if pressed[pygame.K_5] and time_pass > 20:
+        screen.fill(GRAY)
+        apollonian_wrp(n, [640, 360], 350, BLACK)
         time_pass = 0
 
 
