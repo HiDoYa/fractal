@@ -169,8 +169,11 @@ def apollonian_rec(n, p_1, p_2, p_3, b_1, b_2, b_3, color):
     apollonian_rec(n - 1, p_1, p_3, z_4_1, b_1, b_3, b_4_1, color)
     apollonian_rec(n - 1, p_1, p_3, z_4_2, b_1, b_3, b_4_2, color)
 
+text = pygame.font.SysFont("Gill Sans", 25)
+tx = text.render("Press 1-7 to see different fractals.", False, BLACK)
 
-n = 0
+# For testing purposes only
+# n = 0
 
 while not done:
     for event in pygame.event.get():
@@ -180,14 +183,16 @@ while not done:
     pressed = pygame.key.get_pressed()
 
     time_pass += 1
-    if pressed[pygame.K_UP] and time_pass > 10:
-        time_pass = 0
-        n += 1
-        print(n)
-    if pressed[pygame.K_DOWN] and time_pass > 10:
-        time_pass = 0
-        n -= 1
-        print(n)
+
+    # For testing purposes only
+    # if pressed[pygame.K_UP] and time_pass > 10:
+    #     time_pass = 0
+    #     n += 1
+    #     print(n)
+    # if pressed[pygame.K_DOWN] and time_pass > 10:
+    #     time_pass = 0
+    #     n -= 1
+    #     print(n)
 
 
     if pressed[pygame.K_1] and time_pass > 20:
@@ -219,6 +224,7 @@ while not done:
         apollonian_wrp(6, [640, 360], 350, 4, BLACK)
         time_pass = 0
 
+    screen.blit(tx, (30, 10))
 
     pygame.display.flip()
 
