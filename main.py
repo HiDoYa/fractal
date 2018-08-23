@@ -109,20 +109,19 @@ def circle(n, pos, rad, color):
     circle(n - 1, pos_7, rad / 2, color)
     circle(n - 1, pos_8, rad / 2, color)
 
-center = [640, 360]
-def apollonian_wrp(n, pos, rad, color):
-    pos_1 = [int(pos[0] - rad / 2), pos[1]]
-    pos_2 = [int(pos[0] + rad / 2), pos[1]]
+def apollonian_wrp(n, p_1, rad, parts, color):
+    r_1 = rad
+    r_2 = rad / parts
+    r_3 = rad * (parts - 1) / parts
 
-    pygame.draw.circle(screen, color, pos, int(rad), 1)
-    pygame.draw.circle(screen, color, pos_1, int(rad / 2), 1)
-    pygame.draw.circle(screen, color, pos_2, int(rad / 2), 1)
+    p_2 = [int(p_1[0] - r_3), p_1[1]]
+    p_3 = [int(p_1[0] + r_2), p_1[1]]
 
-    b_1 = -1 / rad
-    b_2 = rad / 2
-    b_3 = rad / 2
+    pygame.draw.circle(screen, color, p_1, int(r_1), 1)
+    pygame.draw.circle(screen, color, p_2, int(r_2), 1)
+    pygame.draw.circle(screen, color, p_3, int(r_3), 1)
 
-    apollonian_rec(n, pos, pos_1, pos_2, -1 / rad, 2 / rad, 2 / rad, color)
+    apollonian_rec(n, p_1, p_2, p_3, -1 / r_1, 1 / r_2, 1 / r_3, color)
 
 def apollonian_rec(n, p_1, p_2, p_3, b_1, b_2, b_3, color):
     # Descartes theorem
@@ -205,11 +204,19 @@ while not done:
         time_pass = 0
     if pressed[pygame.K_4] and time_pass > 20:
         screen.fill(GRAY)
-        circle(3, [640, 360], 300, WHITE)
+        circle(3, [640, 360], 350, WHITE)
         time_pass = 0
     if pressed[pygame.K_5] and time_pass > 20:
         screen.fill(GRAY)
-        apollonian_wrp(n, [640, 360], 350, BLACK)
+        apollonian_wrp(6, [640, 360], 350, 2, BLACK)
+        time_pass = 0
+    if pressed[pygame.K_6] and time_pass > 20:
+        screen.fill(GRAY)
+        apollonian_wrp(6, [640, 360], 350, 3, BLACK)
+        time_pass = 0
+    if pressed[pygame.K_7] and time_pass > 20:
+        screen.fill(GRAY)
+        apollonian_wrp(6, [640, 360], 350, 4, BLACK)
         time_pass = 0
 
 
