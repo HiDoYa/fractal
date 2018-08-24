@@ -322,7 +322,7 @@ while not done:
         time_pass = 0
     if pressed[pygame.K_t] and time_pass > 20:
         screen.fill(GRAY)
-        juliana_hopkins(4, GRAY)
+        juliana_hopkins(4, WHITE)
         time_pass = 0
 
     screen.blit(tx_1, (20, 40))
