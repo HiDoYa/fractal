@@ -169,11 +169,56 @@ def apollonian_rec(n, p_1, p_2, p_3, b_1, b_2, b_3, color):
     apollonian_rec(n - 1, p_1, p_3, z_4_1, b_1, b_3, b_4_1, color)
     apollonian_rec(n - 1, p_1, p_3, z_4_2, b_1, b_3, b_4_2, color)
 
-text = pygame.font.SysFont("Gill Sans", 25)
-tx = text.render("Press 1-7 to see different fractals.", False, BLACK)
-
 # For testing purposes only
-# n = 0
+n = 2
+
+# z^2 + 1
+# interesting pows 2 with 12, 3, 
+def z_update(n, z):
+    c = 0
+    if n == 0:
+        c = -1.037 + 0.17j
+    if n == 1:
+        c = -0.52 + 0.57j
+    if n == 2:
+        c = -0.624 + 0.435j
+    if n == 3:
+        c = 0.26 + 0.54j
+    if n == 4:
+        c = -0.72 - 0.3275j
+    return pow(z, 2) + c
+
+def juliana_hopkins(n, color):
+    for y in range(-360, 360):
+        for x in range(-640, 640):
+            a = x / 320
+            b = y / 180
+            julia(n, [a, b], color)
+
+def julia(n, pos, color):
+    color_factor = 4
+    no_draw = False
+    no_draw_pos = math.floor(255 / color_factor)
+    z = pos[0] + pos[1] * 1j
+
+    for x in range(0, math.floor(255 / color_factor)):
+        z = z_update(n, z)
+        if math.sqrt(z.real * z.real + z.imag * z.imag) >= 2:
+            # not in set
+            no_draw = True
+            no_draw_pos = x
+            break;
+
+    if no_draw_pos > 50:
+        color = [0, 0, 0]
+    else:
+        color = [color[0], color[1] - no_draw_pos * color_factor, color[2]]
+    pygame.draw.circle(screen, color, [int(pos[0] * 320 + 640), int(pos[1] * 180 + 360)], 1)
+
+text = pygame.font.SysFont("Gill Sans", 25)
+tx_wait = text.render("Please wait a second for fractals to load.", False, BLACK)
+tx_1 = text.render("Press 1-7 to see different fractals.", False, BLACK)
+tx_2 = text.render("Press q, w, e, r, t to see different Julia set fractals.", False, BLACK)
 
 while not done:
     for event in pygame.event.get():
@@ -185,14 +230,14 @@ while not done:
     time_pass += 1
 
     # For testing purposes only
-    # if pressed[pygame.K_UP] and time_pass > 10:
-    #     time_pass = 0
-    #     n += 1
-    #     print(n)
-    # if pressed[pygame.K_DOWN] and time_pass > 10:
-    #     time_pass = 0
-    #     n -= 1
-    #     print(n)
+    if pressed[pygame.K_UP] and time_pass > 10:
+        time_pass = 0
+        n += 1
+        print(n)
+    if pressed[pygame.K_DOWN] and time_pass > 10:
+        time_pass = 0
+        n -= 1
+        print(n)
 
 
     if pressed[pygame.K_1] and time_pass > 20:
@@ -224,7 +269,30 @@ while not done:
         apollonian_wrp(6, [640, 360], 350, 4, BLACK)
         time_pass = 0
 
-    screen.blit(tx, (30, 10))
+    if pressed[pygame.K_q] and time_pass > 20:
+        screen.fill(GRAY)
+        juliana_hopkins(0, WHITE)
+        time_pass = 0
+    if pressed[pygame.K_w] and time_pass > 20:
+        screen.fill(GRAY)
+        juliana_hopkins(1, WHITE)
+        time_pass = 0
+    if pressed[pygame.K_e] and time_pass > 20:
+        screen.fill(GRAY)
+        juliana_hopkins(2, WHITE)
+        time_pass = 0
+    if pressed[pygame.K_r] and time_pass > 20:
+        screen.fill(GRAY)
+        juliana_hopkins(3, WHITE)
+        time_pass = 0
+    if pressed[pygame.K_t] and time_pass > 20:
+        screen.fill(GRAY)
+        juliana_hopkins(4, WHITE)
+        time_pass = 0
+
+    screen.blit(tx_1, (20, 10))
+    screen.blit(tx_2, (20, 40))
+    screen.blit(tx_wait, (850, 10))
 
     pygame.display.flip()
 
