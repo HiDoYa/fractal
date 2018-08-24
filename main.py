@@ -239,7 +239,7 @@ def mand(pos, color):
     if no_draw_pos > 50:
         color = [0, 0, 0]
     else:
-        color = [color[0], color[1] - no_draw_pos * color_factor, color[2] - no_draw_pos * color_factor]
+        color = [color[0] - no_draw_pos * color_factor, color[1] - no_draw_pos * color_factor, color[2]]
     pygame.draw.circle(screen, color, [int(pos[0] * 320 + 640), int(pos[1] * 180 + 360)], 1)
 
 
