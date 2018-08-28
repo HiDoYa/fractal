@@ -155,7 +155,7 @@ def apollonian_rec(n, p_1, p_2, p_3, b_1, b_2, b_3, color):
         try:
             pygame.draw.circle(screen, color, [int(z_4_2[0]), int(z_4_2[1])], int(abs(1 / b_4_2)), 1)
         except ValueError:
-            pygame.draw.circle(screen, color, [int(z_4_1[0]), int(z_4_1[1])], int(abs(1 / b_4_1)), 0)
+            pygame.draw.circle(screen, color, [int(z_4_2[0]), int(z_4_2[1])], int(abs(1 / b_4_1)), 0)
 
     if n == 0:
         return
